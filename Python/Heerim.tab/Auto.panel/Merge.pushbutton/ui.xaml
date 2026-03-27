@@ -1,0 +1,93 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Heerim Auto Merge Manager" Height="400" Width="450"
+        WindowStartupLocation="CenterScreen" Background="#F5F5F7"
+        FontFamily="Segoe UI" FontSize="13" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True">
+    
+    <Window.Resources>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1D1D1F"/>
+        </Style>
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#34C759"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#D1D1D6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+
+    <Border BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="16" Background="White" MouseLeftButtonDown="Window_MouseDown" KeyDown="Window_KeyDown" Focusable="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Background="#FBFBFD" Margin="0,0,0,1">
+                <TextBlock Text="Auto Merge" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25,0,0,0"/>
+            </Grid>
+
+            <!-- Content Area -->
+            <Border Grid.Row="1" Padding="25">
+                <StackPanel>
+                    <TextBlock Text="병합(Merge) 모드 선택" FontWeight="Bold" Margin="0,0,0,15" Foreground="#424245"/>
+                    
+                    <Border Background="#F9F9FB" BorderBrush="#E5E5EA" BorderThickness="1" CornerRadius="8" Padding="15">
+                        <StackPanel>
+                            <RadioButton Name="ModeClick" Content="클릭 모드 (참조점 주변 기준)" IsChecked="True" Foreground="#1D1D1F" Margin="0,0,0,12"/>
+                            
+                            <Grid Margin="26,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="반경:" VerticalAlignment="Center" Foreground="#424245" Margin="0,0,10,0"/>
+                                <TextBox Grid.Column="1" Name="RadiusTB" Text="3000" Style="{StaticResource TextBoxStyle}" KeyDown="RadiusTB_KeyDown"/>
+                                <TextBlock Grid.Column="2" Text="mm" VerticalAlignment="Center" Foreground="#8E8E93" Margin="10,0,0,0"/>
+                            </Grid>
+                            
+                            <RadioButton Name="ModeDrag" Content="드래그 모드 (선택 영역 다중 병합)" Foreground="#1D1D1F"/>
+                        </StackPanel>
+                    </Border>
+                    
+                </StackPanel>
+            </Border>
+
+            <!-- Footer -->
+            <Border Grid.Row="2" Background="#FBFBFD" Padding="25,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="취소" Width="100" Height="40" Margin="0,0,15,0" Click="CloseWindow" Background="#E5E5EA" Foreground="#1D1D1F" BorderThickness="0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button Content="실행" Width="120" Height="40" Style="{StaticResource PrimaryButtonStyle}" Click="RunCommand"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

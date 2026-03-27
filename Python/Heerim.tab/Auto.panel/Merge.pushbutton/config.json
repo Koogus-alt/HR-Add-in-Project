@@ -1,0 +1,7 @@
+{
+    "search_radius_mm": 3000.0, 
+    "opt_extensions": true, 
+    "opt_endpoints": true, 
+    "search_radius_ft": 9.8425200000000004, 
+    "opt_intersections": true
+}

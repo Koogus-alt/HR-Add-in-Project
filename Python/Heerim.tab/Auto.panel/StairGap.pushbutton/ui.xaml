@@ -1,0 +1,59 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Stair Gap Filler" Height="300" Width="400"
+        WindowStartupLocation="CenterScreen" Background="#F5F5F7"
+        FontFamily="Segoe UI" FontSize="13" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True">
+    
+    <Window.Resources>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1D1D1F"/>
+        </Style>
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+
+    <Border BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="16" Background="White" MouseLeftButtonDown="Window_MouseDown" KeyDown="Window_KeyDown" Focusable="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Background="#FBFBFD" Margin="0,0,0,1">
+                <TextBlock Text="Stair Gap Filler" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25,0,0,0"/>
+            </Grid>
+
+            <!-- Content Area -->
+            <Border Grid.Row="1" Padding="25">
+                <StackPanel>
+                    <TextBlock Text="생성 모드 선택" FontWeight="Bold" Margin="0,0,0,15" Foreground="#424245"/>
+                    
+                    <RadioButton Name="ModeSolid" Content="Solid Mode (틈새를 계단 재질로 채우기)" IsChecked="True" Margin="0,0,0,10"/>
+                    <RadioButton Name="ModeVoid" Content="Void Mode (겹치는 바닥 부분 잘라내기)" Margin="0,0,0,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Footer -->
+            <Grid Grid.Row="2" Background="#FBFBFD">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0">
+                    <Button Content="취소" Click="CloseWindow" Background="Transparent" Foreground="#0071E3" BorderThickness="0" FontWeight="SemiBold" Padding="15,8" Margin="0,0,15,0"/>
+                    <Button Content="실행" Click="RunCommand" Style="{StaticResource PrimaryButtonStyle}" Width="100"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

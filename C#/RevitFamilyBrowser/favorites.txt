@@ -1,0 +1,4 @@
+가구::1525 x 762mm
+기계 장비::03
+상세 항목::M_Bricks-Section : King Size - 10mm Joint
+상세 항목::M_Bricks-Section : Titan - 12mm Joint
