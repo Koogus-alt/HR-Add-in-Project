@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Heerim Smart Assist</Name>
+    <Assembly>C:\Users\thomashj\AppData\Roaming\pyRevit\Extensions\Heerim.extension\Heerim.tab\Work.panel\SmartAssist.pushbutton\RevitFamilyBrowser_v135.dll</Assembly>
+    <FullClassName>RevitFamilyBrowser.MyApplication</FullClassName>
+    <ClientId>D7C5D1E2-A3B4-4C5D-E6F7-0123456789AB</ClientId>
+    <VendorId>MyVendorId</VendorId>
+    <VendorDescription>MyVendorDescription</VendorDescription>
+  </AddIn>
+</RevitAddIns>

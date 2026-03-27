@@ -1,0 +1,59 @@
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser.csproj.AssemblyReference.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\FamilyBrowserView.baml
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\FamilyBrowserView.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser.AssemblyInfoInputs.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser.AssemblyInfo.cs
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser.csproj.CoreCompileInputs.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\ParameterEditWindow.baml
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\ParameterEditWindow.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\SettingsWindow.baml
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\SettingsWindow.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser_v114_MarkupCompile.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser_v114.g.resources
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\bin\Release\RevitFamilyBrowser_v114.dll
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\RevitFamilyBrowser_v114.dll
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\refint\RevitFamilyBrowser_v114.dll
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release\ref\RevitFamilyBrowser_v114.dll
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser.csproj.AssemblyReference.cache
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\FamilyBrowserView.baml
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\ParameterEditWindow.baml
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\PresetListWindow.baml
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\SettingsWindow.baml
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\FamilyBrowserView.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\ParameterEditWindow.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\PresetListWindow.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\SettingsWindow.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser.AssemblyInfoInputs.cache
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser.AssemblyInfo.cs
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser.csproj.CoreCompileInputs.cache
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\bin\Release\RevitFamilyBrowser_v161.dll
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser_v161_MarkupCompile.cache
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser_v161.g.resources
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\RevitFamilyBrowser_v161.dll
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\refint\RevitFamilyBrowser_v161.dll
+C:\Users\thomashj\.gemini\antigravity\playground\ecliptic-sunspot\obj\Release\ref\RevitFamilyBrowser_v161.dll
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\bin\Release\RevitFamilyBrowser_v189.dll
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser.csproj.AssemblyReference.cache
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\CompoundStructureEditWindow.baml
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\FamilyBrowserView.baml
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\ParameterEditWindow.baml
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\PresetListWindow.baml
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\SettingsWindow.baml
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\TypeParameterEditWindow.baml
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\CompoundStructureEditWindow.g.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\FamilyBrowserView.g.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\ParameterEditWindow.g.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\PresetListWindow.g.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\SettingsWindow.g.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\TypeParameterEditWindow.g.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser_v189_MarkupCompile.cache
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser_v189.g.resources
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser.AssemblyInfoInputs.cache
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser.AssemblyInfo.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser.csproj.CoreCompileInputs.cache
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\RevitFamilyBrowser_v189.dll
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\refint\RevitFamilyBrowser_v189.dll
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\ref\RevitFamilyBrowser_v189.dll
