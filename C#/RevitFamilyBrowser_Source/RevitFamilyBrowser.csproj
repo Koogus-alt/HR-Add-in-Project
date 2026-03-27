@@ -35,12 +35,6 @@
     <Resource Include="Resources\SmartAssist.png" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <!-- Copy current build output to registration folder -->
-    <Exec Command="if exist &quot;$(TargetDir)$(TargetName).dll&quot; copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(AppData)\pyRevit\Extensions\Heerim.extension\Heerim.tab\Work.panel\SmartAssist.pushbutton\$(TargetName).dll&quot; /Y" />
-    
-    <!-- Automatically update the SmartAssist.addin manifest to point to the new version DLL -->
-    <Exec Command="powershell -Command &quot;%24file = '$(AppData)\Autodesk\Revit\Addins\2026\SmartAssist.addin'; if (Test-Path %24file) { %24content = Get-Content %24file; %24content = %24content -replace 'RevitFamilyBrowser_v\d+', '$(TargetName)'; Set-Content -Path %24file -Value %24content }&quot;" />
-  </Target>
+  <!-- PostBuild script removed manually to allow GitHub tracking without path errors -->
 
 </Project>

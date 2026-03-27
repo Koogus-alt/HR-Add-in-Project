@@ -253,7 +253,7 @@ namespace RevitFamilyBrowser {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/RevitFamilyBrowser_v161;component/familybrowserview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/RevitFamilyBrowser_v189;component/familybrowserview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\FamilyBrowserView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
