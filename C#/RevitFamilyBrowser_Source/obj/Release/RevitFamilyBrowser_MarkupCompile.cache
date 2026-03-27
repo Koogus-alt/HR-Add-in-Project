@@ -1,0 +1,20 @@
+﻿RevitFamilyBrowser
+
+
+library
+C#
+.cs
+C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\obj\Release\
+RevitFamilyBrowser
+none
+false
+TRACE;RELEASE;NET;NET8_0;NETCOREAPP
+
+61919834773
+
+13607361527
+2091063484339
+CompoundStructureEditWindow.xaml;FamilyBrowserView.xaml;ParameterEditWindow.xaml;PresetListWindow.xaml;SettingsWindow.xaml;TypeParameterEditWindow.xaml;
+
+False
+
