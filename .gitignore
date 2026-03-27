@@ -1,0 +1,14 @@
+﻿# Visual Studio / C#
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.sln.docstates
+
+# Python / pyRevit
+*.pyc
+__pycache__/
+
+# OS
+.DS_Store
+Thumbs.db
