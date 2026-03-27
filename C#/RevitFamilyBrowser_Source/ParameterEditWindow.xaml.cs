@@ -421,13 +421,12 @@ namespace RevitFamilyBrowser
                                 t.Start();
                                 try
                                 {
+                                    Level anyLevel = new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>().FirstOrDefault();
+                                    Element tempInst = null;
+
                                     if (symbol is FamilySymbol fs2)
                                     {
                                         if (!fs2.IsActive) fs2.Activate();
-                                        
-                                        Level anyLevel = new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>().FirstOrDefault();
-                                        Element tempInst = null;
-                                        
                                         try {
                                             if (anyLevel != null) tempInst = doc.Create.NewFamilyInstance(XYZ.Zero, fs2, anyLevel, Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
                                         } catch { }
@@ -435,9 +434,42 @@ namespace RevitFamilyBrowser
                                         if (tempInst == null) {
                                             try { tempInst = doc.Create.NewFamilyInstance(XYZ.Zero, fs2, Autodesk.Revit.DB.Structure.StructuralType.NonStructural); } catch { }
                                         }
-
-                                        if (tempInst != null) CollectInstanceParams(tempInst, extendedParamInfo);
                                     }
+                                    else if (anyLevel != null)
+                                    {
+                                        // System Family Creation Trick
+                                        try {
+                                            if (symbol is WallType) {
+                                                Curve wallLine = Line.CreateBound(XYZ.Zero, new XYZ(10, 0, 0));
+                                                tempInst = Wall.Create(doc, wallLine, symbol.Id, anyLevel.Id, 10, 0, false, false);
+                                            }
+                                            else if (symbol is FloorType) {
+                                                var curveLoop = new CurveLoop();
+                                                curveLoop.Append(Line.CreateBound(XYZ.Zero, new XYZ(10, 0, 0)));
+                                                curveLoop.Append(Line.CreateBound(new XYZ(10, 0, 0), new XYZ(10, 10, 0)));
+                                                curveLoop.Append(Line.CreateBound(new XYZ(10, 10, 0), new XYZ(0, 10, 0)));
+                                                curveLoop.Append(Line.CreateBound(new XYZ(0, 10, 0), XYZ.Zero));
+                                                tempInst = Floor.Create(doc, new List<CurveLoop>{curveLoop}, symbol.Id, anyLevel.Id);
+                                            }
+                                            // Using explicit namespaces for MEP to prevent build failure if missing usings
+                                            else if (symbol.Category != null && symbol.Category.Id.Value == (long)BuiltInCategory.OST_PipeCurves) {
+                                                var sysType = new FilteredElementCollector(doc).OfClass(typeof(Autodesk.Revit.DB.Plumbing.PipingSystemType)).FirstElementId();
+                                                tempInst = Autodesk.Revit.DB.Plumbing.Pipe.Create(doc, sysType, symbol.Id, anyLevel.Id, XYZ.Zero, new XYZ(10, 0, 0));
+                                            }
+                                            else if (symbol.Category != null && symbol.Category.Id.Value == (long)BuiltInCategory.OST_DuctCurves) {
+                                                var sysType = new FilteredElementCollector(doc).OfClass(typeof(Autodesk.Revit.DB.Mechanical.MechanicalSystemType)).FirstElementId();
+                                                tempInst = Autodesk.Revit.DB.Mechanical.Duct.Create(doc, sysType, symbol.Id, anyLevel.Id, XYZ.Zero, new XYZ(10, 0, 0));
+                                            }
+                                            else if (symbol.Category != null && symbol.Category.Id.Value == (long)BuiltInCategory.OST_CableTray) {
+                                                tempInst = Autodesk.Revit.DB.Electrical.CableTray.Create(doc, symbol.Id, XYZ.Zero, new XYZ(10, 0, 0), anyLevel.Id);
+                                            }
+                                            else if (symbol.Category != null && symbol.Category.Id.Value == (long)BuiltInCategory.OST_Conduit) {
+                                                tempInst = Autodesk.Revit.DB.Electrical.Conduit.Create(doc, symbol.Id, XYZ.Zero, new XYZ(10, 0, 0), anyLevel.Id);
+                                            }
+                                        } catch { }
+                                    }
+
+                                    if (tempInst != null) CollectInstanceParams(tempInst, extendedParamInfo);
                                 }
                                 catch { }
                                 t.RollBack();
