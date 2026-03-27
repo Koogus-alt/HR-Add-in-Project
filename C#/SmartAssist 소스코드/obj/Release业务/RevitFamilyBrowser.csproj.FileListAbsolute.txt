@@ -1,0 +1,13 @@
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser.csproj.AssemblyReference.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\FamilyBrowserView.baml
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\FamilyBrowserView.g.cs
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser.AssemblyInfoInputs.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser.AssemblyInfo.cs
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser.csproj.CoreCompileInputs.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\bin\Release业务\RevitFamilyBrowser_v66.dll
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser_v66_MarkupCompile.cache
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser_v66.g.resources
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\RevitFamilyBrowser_v66.dll
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\refint\RevitFamilyBrowser_v66.dll
+C:\Users\thomashj\.gemini\antigravity\playground\deep-kepler\RevitFamilyBrowser_src\obj\Release业务\ref\RevitFamilyBrowser_v66.dll
