@@ -1,9 +1,12 @@
-<Window x:Class="Heerim_AutoPlacement.MainView"
+<Window x:Class="Heerim_SheetsAndView.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Heerim 도면 자동배치" Height="600" Width="800"
+        Title="Heerim Sheets &amp; Views" Height="600" Width="800"
         WindowStartupLocation="CenterScreen" Background="#F5F5F7">
-    <Grid>
+        <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+<Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -12,12 +15,12 @@
 
         <!-- Header -->
         <Border Padding="15" Background="White" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
-            <Grid>
+    <Grid>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="heerim" FontSize="20" FontWeight="Bold" Foreground="#333333" FontStyle="Italic"/>
                     <TextBlock Text=" Architects &amp; Planners" FontSize="10" VerticalAlignment="Bottom" Foreground="#757575" Margin="5,0,0,4"/>
                 </StackPanel>
-                <TextBlock Text="HEERIM 도면 자동배치" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2196F3"/>
+                <TextBlock Text="HEERIM Sheets &amp; Views" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2196F3"/>
             </Grid>
         </Border>
 
@@ -59,7 +62,29 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="View Name" Binding="{Binding ViewName}" Width="2*"/>
+                            <DataGridTemplateColumn Header="View Name" Width="2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="⊟ " Foreground="#2196F3" FontWeight="Bold" VerticalAlignment="Center"
+                                                       Visibility="{Binding IsDependentView, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                            <TextBox Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            <DataGridTemplateColumn Header="Crop Area" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding CropButtonText}" 
+                                                Background="Transparent" BorderThickness="0" Foreground="#2196F3" FontWeight="Bold"
+                                                Cursor="Hand"
+                                                Command="{Binding DataContext.DrawBoxCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             
                             <DataGridTemplateColumn Header="Level" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -128,7 +153,10 @@
                     </Grid.ColumnDefinitions>
                     
                     <StackPanel>
-                        <TextBlock Text="배치 설정" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="배치 설정" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <Button Content="Auto Matching" Command="{Binding AutoMatchCommand}" Padding="10,5" Background="#E8F5E9" BorderBrush="#4CAF50"/>
+                        </StackPanel>
                         <DataGrid Height="300" AutoGenerateColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Sheet Name" Width="*"/>
@@ -138,7 +166,7 @@
                     </StackPanel>
 
                     <Border Grid.Column="1" Margin="10,0,0,0" BorderBrush="#E0E0E0" BorderThickness="1" Background="White" CornerRadius="4">
-                        <Grid>
+    <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>

@@ -4,9 +4,9 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Heerim_AutoPlacement
+namespace Heerim_SheetsAndView
 {
-    public class AutoPlacementCommand
+    public class SheetsAndViewCommand
     {
         public static void Run(UIApplication uiApp)
         {
@@ -16,8 +16,8 @@ namespace Heerim_AutoPlacement
             // WPF 창 인스턴스 생성
             MainView view = new MainView();
 
-            // Revit 데이터를 ViewModel에 로드하는 로직 (추후 구현)
-            LoadRevitData(doc, view.ViewModel);
+            // Revit 데이터를 ViewModel에 로드
+            view.ViewModel.LoadData(uiDoc);
 
             // 창 표시
             if (view.ShowDialog() == true)
@@ -63,11 +63,7 @@ namespace Heerim_AutoPlacement
             }
         }
 
-        private static void LoadRevitData(Document doc, MainViewModel viewModel)
-        {
-            // 실제 Revit Document에서 도면층, 시트 정보를 수집하여 ViewModel에 채움
-            viewModel.LoadData(doc);
-        }
+
 
         private static void ExecutePlacement(Document doc, MainViewModel viewModel, out int viewCount, out int sheetCount, out ElementId firstViewId, out ElementId firstSheetId)
         {

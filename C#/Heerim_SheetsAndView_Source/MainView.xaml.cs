@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Autodesk.Revit.DB;
 
-namespace Heerim_AutoPlacement
+namespace Heerim_SheetsAndView
 {
     public partial class MainView : Window
     {
@@ -18,6 +18,8 @@ namespace Heerim_AutoPlacement
             InitializeComponent();
             ViewModel = new MainViewModel();
             this.DataContext = ViewModel;
+            ViewModel.RequestHide += () => this.Hide();
+            ViewModel.RequestShow += () => this.ShowDialog();
         }
 
         private void OnApplyClick(object sender, RoutedEventArgs e)
@@ -38,6 +40,10 @@ namespace Heerim_AutoPlacement
         public ObservableCollection<ViewItem> ViewItems { get; set; }
         public ObservableCollection<SheetItem> SheetItems { get; set; }
         public ObservableCollection<LayoutPoint> LayoutPoints { get; set; }
+        
+        public event Action RequestHide;
+        public event Action RequestShow;
+        private Autodesk.Revit.UI.UIDocument _uiDoc;
         
         public List<string> Levels { get; set; }
         public List<string> ViewTemplates { get; set; }
@@ -70,6 +76,7 @@ namespace Heerim_AutoPlacement
         public ICommand ExportExcelCommand { get; }
         public ICommand AddViewCommand { get; }
         public ICommand DeleteViewCommand { get; }
+        public ICommand DrawBoxCommand { get; }
 
         public MainViewModel()
         {
@@ -81,6 +88,7 @@ namespace Heerim_AutoPlacement
             ExportExcelCommand = new RelayCommand(OnExportExcel);
             AddViewCommand = new RelayCommand(OnAddView);
             DeleteViewCommand = new RelayCommand(OnDeleteView);
+            DrawBoxCommand = new RelayCommand(OnDrawBox);
 
             // Generate 10x10 Grid Points
             for (int i = 0; i < 100; i++)
@@ -94,8 +102,11 @@ namespace Heerim_AutoPlacement
             TitleBlocks = new List<string>();
         }
 
-        public void LoadData(Document doc)
+        public void LoadData(Autodesk.Revit.UI.UIDocument uiDoc)
         {
+            _uiDoc = uiDoc;
+            Document doc = _uiDoc.Document;
+
             // Populate Dropdowns
             Levels = RevitDataManager.GetLevels(doc).Select(l => l.Name).ToList(); OnPropertyChanged(nameof(Levels));
             
@@ -170,6 +181,59 @@ namespace Heerim_AutoPlacement
             foreach (var item in selectedItems) ViewItems.Remove(item);
         }
 
+        private void OnDrawBox(object obj)
+        {
+            if (obj is ViewItem item)
+            {
+                RequestHide?.Invoke();
+                try
+                {
+                    var pickedBox = _uiDoc.Selection.PickBox(Autodesk.Revit.UI.Selection.PickBoxStyle.Directional, "크롭 영역을 드래그하세요.");
+                    item.UserCropBox = new BoundingBoxXYZ { Min = pickedBox.Min, Max = pickedBox.Max };
+                    item.HasCropBox = true;
+                    DrawDetailLinesBox(_uiDoc.Document, pickedBox.Min, pickedBox.Max);
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException) { }
+                catch (Exception ex)
+                {
+                    Autodesk.Revit.UI.TaskDialog.Show("Error", ex.Message);
+                }
+                finally
+                {
+                    RequestShow?.Invoke();
+                }
+            }
+        }
+
+        private void DrawDetailLinesBox(Document doc, XYZ min, XYZ max)
+        {
+            using (Transaction trans = new Transaction(doc, "크롭 영역 표시"))
+            {
+                trans.Start();
+                try
+                {
+                    View activeView = doc.ActiveView;
+                    XYZ pt1 = new XYZ(min.X, min.Y, 0);
+                    XYZ pt2 = new XYZ(max.X, min.Y, 0);
+                    XYZ pt3 = new XYZ(max.X, max.Y, 0);
+                    XYZ pt4 = new XYZ(min.X, max.Y, 0);
+
+                    Line line1 = Line.CreateBound(pt1, pt2);
+                    Line line2 = Line.CreateBound(pt2, pt3);
+                    Line line3 = Line.CreateBound(pt3, pt4);
+                    Line line4 = Line.CreateBound(pt4, pt1);
+
+                    doc.Create.NewDetailCurve(activeView, line1);
+                    doc.Create.NewDetailCurve(activeView, line2);
+                    doc.Create.NewDetailCurve(activeView, line3);
+                    doc.Create.NewDetailCurve(activeView, line4);
+
+                    trans.Commit();
+                }
+                catch { trans.RollBack(); }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -182,6 +246,22 @@ namespace Heerim_AutoPlacement
             get => _isSelected;
             set { _isSelected = value; OnPropertyChanged(nameof(IsSelected)); }
         }
+
+        private bool _hasCropBox;
+        public bool HasCropBox
+        {
+            get => _hasCropBox;
+            set 
+            { 
+                _hasCropBox = value; 
+                OnPropertyChanged(nameof(HasCropBox)); 
+                OnPropertyChanged(nameof(CropButtonText));
+            }
+        }
+        
+        public string CropButtonText => HasCropBox ? "✅ 지정됨" : "🔲 영역 지정";
+        
+        public BoundingBoxXYZ UserCropBox { get; set; }
 
         private string _category = "Floor Plan";
         public string Category
@@ -198,6 +278,12 @@ namespace Heerim_AutoPlacement
         }
 
         private string _viewName;
+        
+        private int _indentLevel;
+        public int IndentLevel { get { return _indentLevel; } set { _indentLevel = value; OnPropertyChanged("IndentLevel"); } }
+        private bool _isDependentView;
+        public bool IsDependentView { get { return _isDependentView; } set { _isDependentView = value; OnPropertyChanged("IsDependentView"); } }
+
         public string ViewName
         {
             get => _viewName;

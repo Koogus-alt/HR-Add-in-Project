@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Input;
 
-namespace Heerim_AutoPlacement
+namespace Heerim_SheetsAndView
 {
     public class RelayCommand : ICommand
     {
