@@ -4,15 +4,15 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <AssemblyName>Heerim_AutoPlacement_v15</AssemblyName>
-    <RootNamespace>Heerim_AutoPlacement</RootNamespace>
+    <AssemblyName>Heerim_SheetsAndView</AssemblyName>
+    <RootNamespace>Heerim_SheetsAndView</RootNamespace>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AutoPlacementCommand.cs" />
+    <Compile Include="SheetsAndViewCommand.cs" />
     <Compile Include="ExcelManager.cs" />
     <Compile Include="LayoutEngine.cs" />
     <Compile Include="MainView.xaml.cs" />
@@ -34,6 +34,10 @@
       <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
   </ItemGroup>
 
 </Project>
