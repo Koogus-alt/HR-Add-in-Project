@@ -22,8 +22,51 @@ namespace Heerim_SheetsAndView
             ViewModel.RequestShow += () => this.ShowDialog();
         }
 
+        private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            var vm = this.DataContext as MainViewModel;
+            if (vm == null || vm.ViewItems == null) return;
+            string query = SearchBox.Text.ToLower();
+            
+            var viewSource = System.Windows.Data.CollectionViewSource.GetDefaultView(vm.ViewItems);
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                viewSource.Filter = null;
+            }
+            else
+            {
+                viewSource.Filter = obj =>
+                {
+                    var item = obj as ViewItem;
+                    if (item == null) return false;
+                    return (item.ViewName != null && item.ViewName.ToLower().Contains(query))
+                        || (item.LevelName != null && item.LevelName.ToLower().Contains(query))
+                        || (item.SelectedScopeBox != null && item.SelectedScopeBox.ToLower().Contains(query));
+                };
+            }
+        }
+
+        private void DataGridTextBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is System.Windows.Controls.TextBox tb)
+            {
+                tb.SelectAll();
+                e.Handled = true;
+            }
+        }
+
         private void OnApplyClick(object sender, RoutedEventArgs e)
         {
+            var vm = this.DataContext as MainViewModel;
+            if (vm != null)
+            {
+                string validationResult = vm.ValidateNames();
+                if (validationResult != null)
+                {
+                    System.Windows.MessageBox.Show(validationResult + "\n(안내: 모델 내의 모든 뷰/도면 이름은 고유해야 합니다.)", "중복 방지", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                    return;
+                }
+            }
             this.DialogResult = true;
             this.Close();
         }
@@ -100,6 +143,43 @@ namespace Heerim_SheetsAndView
             ViewTemplates = new List<string>();
             ScopeBoxes = new List<string>();
             TitleBlocks = new List<string>();
+        }
+
+        public string ValidateNames()
+        {
+            if (_uiDoc == null || _uiDoc.Document == null) return null;
+            Document doc = _uiDoc.Document;
+
+            // View Name check
+            var selectedViews = ViewItems.Where(v => v.IsSelected && !string.IsNullOrWhiteSpace(v.ViewName)).ToList();
+            var viewNames = new HashSet<string>();
+            foreach(var item in selectedViews)
+            {
+                for (int i = 0; i < item.Count; i++)
+                {
+                    string suffix = (item.Count > 1) ? $"_{i + 1}" : "";
+                    string name = item.ViewName + suffix;
+                    if (!viewNames.Add(name)) return $"표(입력값) 내 뷰 이름 중복: {name}"; 
+                }
+            }
+
+            var existingViews = new FilteredElementCollector(doc).OfClass(typeof(View)).Cast<View>().Select(v => v.Name).ToHashSet();
+            var dupView = viewNames.FirstOrDefault(n => existingViews.Contains(n));
+            if (dupView != null) return $"프로젝트 내 기존 뷰 이름과 중복: {dupView}";
+
+            // Sheet Number check
+            var selectedSheets = SheetItems.Where(s => s.IsSelected && !string.IsNullOrWhiteSpace(s.SheetNumber)).ToList();
+            var sheetNumbers = new HashSet<string>();
+            foreach(var item in selectedSheets)
+            {
+                if (!sheetNumbers.Add(item.SheetNumber)) return $"표(입력값) 내 도면 번호 중복: {item.SheetNumber}"; 
+            }
+
+            var existingSheets = new FilteredElementCollector(doc).OfClass(typeof(ViewSheet)).Cast<ViewSheet>().Select(s => s.SheetNumber).ToHashSet();
+            var dupSheet = sheetNumbers.FirstOrDefault(n => existingSheets.Contains(n));
+            if (dupSheet != null) return $"프로젝트 내 기존 도면 번호와 중복: {dupSheet}";
+
+            return null;
         }
 
         public void LoadData(Autodesk.Revit.UI.UIDocument uiDoc)
@@ -191,7 +271,6 @@ namespace Heerim_SheetsAndView
                     var pickedBox = _uiDoc.Selection.PickBox(Autodesk.Revit.UI.Selection.PickBoxStyle.Directional, "크롭 영역을 드래그하세요.");
                     item.UserCropBox = new BoundingBoxXYZ { Min = pickedBox.Min, Max = pickedBox.Max };
                     item.HasCropBox = true;
-                    DrawDetailLinesBox(_uiDoc.Document, pickedBox.Min, pickedBox.Max);
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException) { }
                 catch (Exception ex)
@@ -294,8 +373,15 @@ namespace Heerim_SheetsAndView
         public string SelectedScopeBox
         {
             get => _selectedScopeBox;
-            set { _selectedScopeBox = value; OnPropertyChanged(nameof(SelectedScopeBox)); }
+            set 
+            { 
+                _selectedScopeBox = value; 
+                OnPropertyChanged(nameof(SelectedScopeBox)); 
+                OnPropertyChanged(nameof(IsCropAreaEnabled));
+            }
         }
+
+        public bool IsCropAreaEnabled => string.IsNullOrEmpty(_selectedScopeBox) || _selectedScopeBox == "(None)";
 
         private string _selectedViewTemplate = "(None)";
         public string SelectedViewTemplate

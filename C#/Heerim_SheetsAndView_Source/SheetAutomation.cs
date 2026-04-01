@@ -48,7 +48,8 @@ namespace Heerim_SheetsAndView
                     try { newView.Discipline = ViewDiscipline.Architectural; } catch { }
 
                     string suffix = (item.Count > 1) ? $"_{i + 1}" : "";
-                    newView.Name = item.ViewName + suffix;
+                    if (!string.IsNullOrWhiteSpace(item.ViewName))
+                        newView.Name = item.ViewName + suffix;
 
                     if (item.SelectedViewTemplate != "(None)")
                     {
@@ -69,25 +70,30 @@ namespace Heerim_SheetsAndView
                     // UserCropBox 로직 적용
                     if (item.HasCropBox && item.UserCropBox != null)
                     {
-                        newView.CropBoxActive = true;
-                        newView.CropBoxVisible = true;
+                        try
+                        {
+                            doc.Regenerate();
+                            newView.CropBoxActive = true;
+                            newView.CropBoxVisible = true;
 
-                        BoundingBoxXYZ viewCrop = newView.CropBox;
-                        Transform viewTransform = viewCrop.Transform;
-                        Transform inverseTransform = viewTransform.Inverse;
+                            BoundingBoxXYZ viewCrop = newView.CropBox;
+                            Transform viewTransform = viewCrop.Transform;
+                            Transform inverseTransform = viewTransform.Inverse;
 
-                        XYZ localMin = inverseTransform.OfPoint(item.UserCropBox.Min);
-                        XYZ localMax = inverseTransform.OfPoint(item.UserCropBox.Max);
+                            XYZ localMin = inverseTransform.OfPoint(item.UserCropBox.Min);
+                            XYZ localMax = inverseTransform.OfPoint(item.UserCropBox.Max);
 
-                        double minX = Math.Min(localMin.X, localMax.X);
-                        double minY = Math.Min(localMin.Y, localMax.Y);
-                        double maxX = Math.Max(localMin.X, localMax.X);
-                        double maxY = Math.Max(localMin.Y, localMax.Y);
+                            double minX = Math.Min(localMin.X, localMax.X);
+                            double minY = Math.Min(localMin.Y, localMax.Y);
+                            double maxX = Math.Max(localMin.X, localMax.X);
+                            double maxY = Math.Max(localMin.Y, localMax.Y);
 
-                        viewCrop.Min = new XYZ(minX, minY, viewCrop.Min.Z);
-                        viewCrop.Max = new XYZ(maxX, maxY, viewCrop.Max.Z);
+                            viewCrop.Min = new XYZ(minX, minY, viewCrop.Min.Z);
+                            viewCrop.Max = new XYZ(maxX, maxY, viewCrop.Max.Z);
 
-                        newView.CropBox = viewCrop;
+                            newView.CropBox = viewCrop;
+                        }
+                        catch { }
                     }
 
                     createdViews.Add(newView);
@@ -107,8 +113,10 @@ namespace Heerim_SheetsAndView
             foreach (var item in items.Where(i => i.IsSelected))
             {
                 ViewSheet sheet = ViewSheet.Create(doc, titleBlock.Id);
-                sheet.SheetNumber = item.SheetNumber;
-                sheet.Name = item.SheetName;
+                if (!string.IsNullOrWhiteSpace(item.SheetNumber))
+                    sheet.SheetNumber = item.SheetNumber;
+                if (!string.IsNullOrWhiteSpace(item.SheetName))
+                    sheet.Name = item.SheetName;
                 createdSheets.Add(sheet);
             }
             return createdSheets;

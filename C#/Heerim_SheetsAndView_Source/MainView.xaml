@@ -34,24 +34,56 @@
                     </Grid.RowDefinitions>
 
                     <!-- Toolbar -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <Button Foreground="#333" Background="#F0F0F0" Command="{Binding AddViewCommand}" Padding="8,4" Margin="0,0,5,0">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="[+] New View" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                <TextBox Text="1" Width="30" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Content="[X] Delete" Command="{Binding DeleteViewCommand}" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
-                        <Button Content="[D] Duplicate as a Dependent" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
-                        <Button Content="[X] Import / Export" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
-                        <Button Content="[*] Parameters" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
-                        <TextBox Tag="Search..." Width="150" Margin="10,0,0,0" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
-                    </StackPanel>
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <WrapPanel VerticalAlignment="Center" Grid.Column="0">
+                            <Button Foreground="#333" Background="#F0F0F0" Command="{Binding AddViewCommand}" Padding="8,4" Margin="0,0,5,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="New View" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                    <TextBox Text="1" Width="30" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Content="Delete" Command="{Binding DeleteViewCommand}" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
+                            <Button Content="Duplicate as a Dependent" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
+                            <Button Content="Import / Export" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
+                            <Button Content="Parameters" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
+                        </WrapPanel>
+                        <Grid Grid.Column="1" VerticalAlignment="Top" Margin="5,0,0,5">
+                            <TextBox x:Name="SearchBox" Width="200" Padding="5,2" BorderThickness="1" BorderBrush="#CCC" TextChanged="SearchBox_TextChanged"/>
+                            <TextBlock IsHitTestVisible="False" Text="🔍 이름/레벨/스코프 검색..." Foreground="#999" Margin="7,3" FontStyle="Italic">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
 
                     <DataGrid Grid.Row="1" ItemsSource="{Binding ViewItems}" AutoGenerateColumns="False" CanUserAddRows="False" 
                               Background="White" BorderBrush="#E0E0E0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F0F0F0">
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E6F2FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E6F2FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
+                        </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header=" " Binding="{Binding IsSelected}" Width="30"/>
+                            <DataGridTemplateColumn Header=" " Width="30">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             
                             <DataGridTemplateColumn Header="Dimension" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -68,7 +100,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="⊟ " Foreground="#2196F3" FontWeight="Bold" VerticalAlignment="Center"
                                                        Visibility="{Binding IsDependentView, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                            <TextBox Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Center"/>
+                                            <TextBox Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -78,10 +110,21 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="{Binding CropButtonText}" 
-                                                Background="Transparent" BorderThickness="0" Foreground="#2196F3" FontWeight="Bold"
-                                                Cursor="Hand"
+                                                IsEnabled="{Binding IsCropAreaEnabled}"
+                                                Background="Transparent" BorderThickness="0" FontWeight="Bold" Cursor="Hand"
                                                 Command="{Binding DataContext.DrawBoxCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
+                                                CommandParameter="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Foreground" Value="#2196F3"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Foreground" Value="#CCCCCC"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -113,7 +156,13 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="50"/>
+                            <DataGridTemplateColumn Header="Count" Width="50">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" TextAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
@@ -137,10 +186,34 @@
                     </StackPanel>
                     
                     <DataGrid Grid.Row="2" AutoGenerateColumns="False" ItemsSource="{Binding SheetItems}">
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E6F2FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#E6F2FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
+                        </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected}"/>
-                            <DataGridTextColumn Header="Sheet Number" Binding="{Binding SheetNumber}" Width="*"/>
-                            <DataGridTextColumn Header="Sheet Name" Binding="{Binding SheetName}" Width="2*"/>
+                            <DataGridTemplateColumn Header="Select">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Sheet Number" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding SheetNumber, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Sheet Name" Width="2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding SheetName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
