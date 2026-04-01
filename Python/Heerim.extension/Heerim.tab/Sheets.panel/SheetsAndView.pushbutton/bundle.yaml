@@ -1,3 +1,7 @@
+<<<<<<< HEAD:Python/Heerim.extension/Heerim.tab/Sheets.panel/AutoPlacement.pushbutton/bundle.yaml
+title: "Sheets\n& View"
+=======
 title: "Sheets\n& Views"
+>>>>>>> main:Python/Heerim.extension/Heerim.tab/Sheets.panel/SheetsAndView.pushbutton/bundle.yaml
 tooltip: 도면(Viewport)을 시트에 자동 배치합니다.
 author: Heerim Architects & Planners
