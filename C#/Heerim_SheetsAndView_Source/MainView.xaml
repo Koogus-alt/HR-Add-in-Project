@@ -5,6 +5,14 @@
         WindowStartupLocation="CenterScreen" Background="#F5F5F7">
         <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDependentView}" Value="True">
+                    <Setter Property="Background" Value="#FAFAFA"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 <Grid>
         <Grid.RowDefinitions>
@@ -40,14 +48,14 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <WrapPanel VerticalAlignment="Center" Grid.Column="0">
-                            <Button Foreground="#333" Background="#F0F0F0" Command="{Binding AddViewCommand}" Padding="8,4" Margin="0,0,5,5">
+                            <Button Foreground="#333" Background="#F0F0F0" Command="{Binding AddViewCommand}" CommandParameter="{Binding ElementName=NewViewCountBox, Path=Text}" Padding="8,4" Margin="0,0,5,5">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="New View" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBox Text="1" Width="30" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
+                                    <TextBox x:Name="NewViewCountBox" Text="1" Width="30" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
                                 </StackPanel>
                             </Button>
                             <Button Content="Delete" Command="{Binding DeleteViewCommand}" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
-                            <Button Content="Duplicate as a Dependent" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
+                            <Button Content="Duplicate as a Dependent" Command="{Binding DuplicateDependentCommand}" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
                             <Button Content="Import / Export" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
                             <Button Content="Parameters" Padding="8,4" Margin="0,0,5,5" Background="#F0F0F0"/>
                         </WrapPanel>
@@ -70,6 +78,9 @@
 
                     <DataGrid Grid.Row="1" ItemsSource="{Binding ViewItems}" AutoGenerateColumns="False" CanUserAddRows="False" 
                               Background="White" BorderBrush="#E0E0E0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F0F0F0">
+                        <DataGrid.RowStyle>
+                            <StaticResource ResourceKey="DataGridRowStyle"/>
+                        </DataGrid.RowStyle>
                         <DataGrid.Resources>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#E6F2FF"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
@@ -98,9 +109,44 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="⊟ " Foreground="#2196F3" FontWeight="Bold" VerticalAlignment="Center"
-                                                       Visibility="{Binding IsDependentView, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                            <TextBox Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
+                                            <!-- Expand/Collapse Button (Only for parents with children) -->
+                                            <ToggleButton IsChecked="{Binding IsExpanded}"
+                                                          Command="{Binding DataContext.ToggleExpandCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                          CommandParameter="{Binding}"
+                                                          Visibility="{Binding HasChildren, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                          Width="18" Height="18" Margin="0,0,5,0">
+                                                <ToggleButton.Template>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <Border Background="Transparent" BorderBrush="#DDD" BorderThickness="1" CornerRadius="2">
+                                                            <TextBlock x:Name="BtnText" Text="+" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="#666"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsChecked" Value="True">
+                                                                <Setter TargetName="BtnText" Property="Text" Value="-"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </ToggleButton.Template>
+                                            </ToggleButton>
+                                            
+                                            <!-- Indent for children WITHOUT button -->
+                                            <Border Width="18" Visibility="{Binding IsDependentView, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,5,0"/>
+
+                                            <TextBox x:Name="ViewNameBox" Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" 
+                                                     BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center"
+                                                     MouseDoubleClick="DataGridTextBox_MouseDoubleClick">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsDependentView}" Value="True">
+                                                                <Setter Property="FontWeight" Value="Normal"/>
+                                                                <Setter Property="Foreground" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -133,7 +179,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox ItemsSource="{Binding DataContext.Levels, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                  SelectedItem="{Binding LevelName}" BorderThickness="0" Background="Transparent"/>
+                                                  SelectedItem="{Binding LevelName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -142,7 +188,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox ItemsSource="{Binding DataContext.ScopeBoxes, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                  SelectedItem="{Binding SelectedScopeBox}" BorderThickness="0" Background="Transparent"/>
+                                                  SelectedItem="{Binding SelectedScopeBox, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -151,7 +197,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox ItemsSource="{Binding DataContext.ViewTemplates, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                  SelectedItem="{Binding SelectedViewTemplate}" BorderThickness="0" Background="Transparent"/>
+                                                  SelectedItem="{Binding SelectedViewTemplate, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -207,10 +253,10 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Sheet Name" Width="2*">
+                            <DataGridTemplateColumn Header="View Name" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBox Text="{Binding SheetName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
+                                        <TextBox Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FocusVisualStyle="{x:Null}" MinWidth="30" MouseDoubleClick="DataGridTextBox_MouseDoubleClick"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -231,6 +277,9 @@
                             <Button Content="Auto Matching" Command="{Binding AutoMatchCommand}" Padding="10,5" Background="#E8F5E9" BorderBrush="#4CAF50"/>
                         </StackPanel>
                         <DataGrid Height="300" AutoGenerateColumns="False">
+                            <DataGrid.RowStyle>
+                                <StaticResource ResourceKey="DataGridRowStyle"/>
+                            </DataGrid.RowStyle>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Sheet Name" Width="*"/>
                                 <DataGridComboBoxColumn Header="Layout"/>

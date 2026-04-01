@@ -13,6 +13,8 @@ namespace Heerim_SheetsAndView
             var templates = RevitDataManager.GetViewTemplates(doc);
             var scopeBoxes = RevitDataManager.GetScopeBoxes(doc);
 
+            ViewPlan lastParentView = null;
+
             foreach (var item in items.Where(i => i.IsSelected))
             {
                 Level level = RevitDataManager.GetLevels(doc).FirstOrDefault(l => l.Name == item.LevelName);
@@ -23,27 +25,41 @@ namespace Heerim_SheetsAndView
                     ? doc.GetDefaultElementTypeId(ElementTypeGroup.ViewTypeCeilingPlan) 
                     : doc.GetDefaultElementTypeId(ElementTypeGroup.ViewTypeFloorPlan);
 
-                // 부모 뷰 찾기 (해당 Level의 기존 평면도)
-                ViewPlan parentView = new FilteredElementCollector(doc)
-                    .OfClass(typeof(ViewPlan))
-                    .Cast<ViewPlan>()
-                    .FirstOrDefault(v => !v.IsTemplate && v.GenLevel != null && v.GenLevel.Id == level.Id && (item.Category == "Floor Plan" ? v.ViewType == ViewType.FloorPlan : v.ViewType == ViewType.CeilingPlan));
-
                 for (int i = 0; i < item.Count; i++)
                 {
                     ViewPlan newView = null;
-                    if (parentView != null)
+
+                    if (item.IsDependentView && lastParentView != null)
                     {
-                        // 종속 뷰 복제
-                        ElementId newViewId = parentView.Duplicate(ViewDuplicateOption.AsDependent);
+                        // 진짜 종속 뷰 복제 (부모가 있을 때만)
+                        ElementId newViewId = lastParentView.Duplicate(ViewDuplicateOption.AsDependent);
                         newView = doc.GetElement(newViewId) as ViewPlan;
                     }
                     else
                     {
-                        // Fallback (모체 뷰가 없으면 새로 생성)
-                        newView = ViewPlan.Create(doc, viewTypeId, level.Id);
+                        // 독립 뷰 생성 (부모 뷰가 없거나 IsDependentView가 false인 경우)
+                        // 기존 방식: 모델 내 기존 뷰가 있으면 복제, 없으면 새로 생성
+                        ViewPlan modelParent = new FilteredElementCollector(doc)
+                            .OfClass(typeof(ViewPlan))
+                            .Cast<ViewPlan>()
+                            .FirstOrDefault(v => !v.IsTemplate && v.GenLevel != null && v.GenLevel.Id == level.Id && (item.Category == "Floor Plan" ? v.ViewType == ViewType.FloorPlan : v.ViewType == ViewType.CeilingPlan));
+
+                        if (modelParent != null)
+                        {
+                            ElementId newViewId = modelParent.Duplicate(ViewDuplicateOption.Duplicate);
+                            newView = doc.GetElement(newViewId) as ViewPlan;
+                        }
+                        else
+                        {
+                            newView = ViewPlan.Create(doc, viewTypeId, level.Id);
+                        }
+
+                        // 이 뷰를 다음 자식들의 부모로 기억
+                        lastParentView = newView;
                     }
                     
+                    if (newView == null) continue;
+
                     try { newView.DetailLevel = ViewDetailLevel.Fine; } catch { }
                     try { newView.Discipline = ViewDiscipline.Architectural; } catch { }
 

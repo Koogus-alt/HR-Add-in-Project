@@ -118,8 +118,10 @@ namespace Heerim_SheetsAndView
         public ICommand ImportExcelCommand { get; }
         public ICommand ExportExcelCommand { get; }
         public ICommand AddViewCommand { get; }
+        public ICommand DuplicateDependentCommand { get; }
         public ICommand DeleteViewCommand { get; }
         public ICommand DrawBoxCommand { get; }
+        public ICommand ToggleExpandCommand { get; }
 
         public MainViewModel()
         {
@@ -130,14 +132,20 @@ namespace Heerim_SheetsAndView
             ImportExcelCommand = new RelayCommand(OnImportExcel);
             ExportExcelCommand = new RelayCommand(OnExportExcel);
             AddViewCommand = new RelayCommand(OnAddView);
+            DuplicateDependentCommand = new RelayCommand(OnDuplicateDependent);
             DeleteViewCommand = new RelayCommand(OnDeleteView);
             DrawBoxCommand = new RelayCommand(OnDrawBox);
-
+            ToggleExpandCommand = new RelayCommand(OnToggleExpand);
+            
             // Generate 10x10 Grid Points
             for (int i = 0; i < 100; i++)
             {
                 LayoutPoints.Add(new LayoutPoint { Number = i });
             }
+
+            // Set Filter for Expand/Collapse
+            var viewSource = System.Windows.Data.CollectionViewSource.GetDefaultView(ViewItems);
+            viewSource.Filter = FilterHierarchy;
 
             Levels = new List<string>();
             ViewTemplates = new List<string>();
@@ -145,10 +153,59 @@ namespace Heerim_SheetsAndView
             TitleBlocks = new List<string>();
         }
 
+        private bool FilterHierarchy(object obj)
+        {
+            if (!(obj is ViewItem item)) return false;
+            // 부모면 무조건 보임
+            if (!item.IsDependentView) return true;
+
+            // 자식이면 부모가 펼쳐져 있는지 확인
+            int index = ViewItems.IndexOf(item);
+            for (int i = index - 1; i >= 0; i--)
+            {
+                if (!ViewItems[i].IsDependentView)
+                {
+                    return ViewItems[i].IsExpanded;
+                }
+            }
+            return true;
+        }
+
+        private void OnToggleExpand(object obj)
+        {
+            if (obj is ViewItem item)
+            {
+                item.IsExpanded = !item.IsExpanded;
+                RefreshFilter();
+            }
+        }
+
+        public void RefreshFilter()
+        {
+            System.Windows.Data.CollectionViewSource.GetDefaultView(ViewItems).Refresh();
+        }
+
         public string ValidateNames()
         {
             if (_uiDoc == null || _uiDoc.Document == null) return null;
             Document doc = _uiDoc.Document;
+
+            // Option 2 적용: 자식이 체크되어 있으면 부모도 자동 선택되게 보정
+            for (int i = 0; i < ViewItems.Count; i++)
+            {
+                if (ViewItems[i].IsSelected && ViewItems[i].IsDependentView)
+                {
+                    // 위로 올라가며 가장 가까운 부모 찾기
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        if (!ViewItems[j].IsDependentView)
+                        {
+                            ViewItems[j].IsSelected = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
             // View Name check
             var selectedViews = ViewItems.Where(v => v.IsSelected && !string.IsNullOrWhiteSpace(v.ViewName)).ToList();
@@ -244,14 +301,49 @@ namespace Heerim_SheetsAndView
         private void OnAddView(object obj)
         {
             var firstLevel = Levels?.FirstOrDefault() ?? "Level 1";
-            ViewItems.Add(new ViewItem 
-            { 
-                LevelName = firstLevel, 
-                ViewName = "New View", 
+            int count = 1;
+            if (obj != null && int.TryParse(obj.ToString(), out int parsed) && parsed > 0)
+                count = parsed;
+
+            for (int i = 0; i < count; i++)
+            {
+                ViewItems.Add(new ViewItem 
+                { 
+                    LevelName = firstLevel, 
+                    ViewName = "New View", 
+                    IsSelected = true,
+                    SelectedScopeBox = "(None)",
+                    SelectedViewTemplate = "(None)"
+                });
+            }
+        }
+
+        private void OnDuplicateDependent(object obj)
+        {
+            var selected = ViewItems.FirstOrDefault(v => v.IsSelected);
+            if (selected == null) return;
+
+            // Find index of selected item
+            int index = ViewItems.IndexOf(selected);
+
+            // Update parent state
+            selected.IsExpanded = true;
+            selected.HasChildren = true;
+            
+            var newItem = new ViewItem
+            {
+                LevelName = selected.LevelName,
+                Category = selected.Category,
+                ViewName = selected.ViewName + " (Dependent)",
                 IsSelected = true,
+                IsDependentView = true,
+                IndentLevel = selected.IndentLevel + 1,
                 SelectedScopeBox = "(None)",
-                SelectedViewTemplate = "(None)"
-            });
+                SelectedViewTemplate = selected.SelectedViewTemplate
+            };
+
+            ViewItems.Insert(index + 1, newItem);
+            RefreshFilter();
         }
 
         private void OnDeleteView(object obj)
@@ -259,6 +351,14 @@ namespace Heerim_SheetsAndView
             var selectedItems = ViewItems.Where(v => v.IsSelected).ToList();
             if (!selectedItems.Any()) return;
             foreach (var item in selectedItems) ViewItems.Remove(item);
+            
+            // Recalculate HasChildren for remaining items
+            foreach(var parent in ViewItems.Where(v => !v.IsDependentView))
+            {
+                int pIdx = ViewItems.IndexOf(parent);
+                parent.HasChildren = (pIdx + 1 < ViewItems.Count && ViewItems[pIdx + 1].IsDependentView);
+            }
+            RefreshFilter();
         }
 
         private void OnDrawBox(object obj)
@@ -367,6 +467,20 @@ namespace Heerim_SheetsAndView
         {
             get => _viewName;
             set { _viewName = value; OnPropertyChanged(nameof(ViewName)); }
+        }
+
+        private bool _isExpanded = true;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set { _isExpanded = value; OnPropertyChanged(nameof(IsExpanded)); }
+        }
+
+        private bool _hasChildren;
+        public bool HasChildren
+        {
+            get => _hasChildren;
+            set { _hasChildren = value; OnPropertyChanged(nameof(HasChildren)); }
         }
 
         private string _selectedScopeBox = "(None)";
