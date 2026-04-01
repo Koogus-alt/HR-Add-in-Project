@@ -1,0 +1,204 @@
+<Window x:Class="Heerim_SheetsAndView.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Heerim Sheets &amp; Views" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen" Background="#F5F5F7">
+        <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Padding="15" Background="White" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
+    <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="heerim" FontSize="20" FontWeight="Bold" Foreground="#333333" FontStyle="Italic"/>
+                    <TextBlock Text=" Architects &amp; Planners" FontSize="10" VerticalAlignment="Bottom" Foreground="#757575" Margin="5,0,0,4"/>
+                </StackPanel>
+                <TextBlock Text="HEERIM Sheets &amp; Views" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Foreground="#2196F3"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Content (Tabs) -->
+        <TabControl Grid.Row="1" Margin="10">
+            <TabItem Header="Create View">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Toolbar -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Foreground="#333" Background="#F0F0F0" Command="{Binding AddViewCommand}" Padding="8,4" Margin="0,0,5,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="[+] New View" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBox Text="1" Width="30" TextAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Content="[X] Delete" Command="{Binding DeleteViewCommand}" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
+                        <Button Content="[D] Duplicate as a Dependent" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
+                        <Button Content="[X] Import / Export" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
+                        <Button Content="[*] Parameters" Padding="8,4" Margin="0,0,5,0" Background="#F0F0F0"/>
+                        <TextBox Tag="Search..." Width="150" Margin="10,0,0,0" VerticalAlignment="Center" BorderThickness="1" BorderBrush="#CCC"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding ViewItems}" AutoGenerateColumns="False" CanUserAddRows="False" 
+                              Background="White" BorderBrush="#E0E0E0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F0F0F0">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header=" " Binding="{Binding IsSelected}" Width="30"/>
+                            
+                            <DataGridTemplateColumn Header="Dimension" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding DataContext.Categories, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                  SelectedItem="{Binding Category}" BorderThickness="0" Background="Transparent"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="View Name" Width="2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="⊟ " Foreground="#2196F3" FontWeight="Bold" VerticalAlignment="Center"
+                                                       Visibility="{Binding IsDependentView, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                            <TextBox Text="{Binding ViewName, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            <DataGridTemplateColumn Header="Crop Area" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding CropButtonText}" 
+                                                Background="Transparent" BorderThickness="0" Foreground="#2196F3" FontWeight="Bold"
+                                                Cursor="Hand"
+                                                Command="{Binding DataContext.DrawBoxCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            <DataGridTemplateColumn Header="Level" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding DataContext.Levels, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                  SelectedItem="{Binding LevelName}" BorderThickness="0" Background="Transparent"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Scope Box" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding DataContext.ScopeBoxes, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                  SelectedItem="{Binding SelectedScopeBox}" BorderThickness="0" Background="Transparent"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="View Template" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding DataContext.ViewTemplates, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                  SelectedItem="{Binding SelectedViewTemplate}" BorderThickness="0" Background="Transparent"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="50"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Create Sheet">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Content="Import Excel" Command="{Binding ImportExcelCommand}" Padding="10,5" Margin="0,0,10,0"/>
+                        <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" Padding="10,5"/>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                        <TextBlock Text="Title Block" FontSize="10" Foreground="#666" Margin="0,0,0,2"/>
+                        <ComboBox Width="300" HorizontalAlignment="Left" ItemsSource="{Binding TitleBlocks}" SelectedItem="{Binding SelectedTitleBlock}"/>
+                    </StackPanel>
+                    
+                    <DataGrid Grid.Row="2" AutoGenerateColumns="False" ItemsSource="{Binding SheetItems}">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected}"/>
+                            <DataGridTextColumn Header="Sheet Number" Binding="{Binding SheetNumber}" Width="*"/>
+                            <DataGridTextColumn Header="Sheet Name" Binding="{Binding SheetName}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="View in Sheet">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="배치 설정" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <Button Content="Auto Matching" Command="{Binding AutoMatchCommand}" Padding="10,5" Background="#E8F5E9" BorderBrush="#4CAF50"/>
+                        </StackPanel>
+                        <DataGrid Height="300" AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Sheet Name" Width="*"/>
+                                <DataGridComboBoxColumn Header="Layout"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+
+                    <Border Grid.Column="1" Margin="10,0,0,0" BorderBrush="#E0E0E0" BorderThickness="1" Background="White" CornerRadius="4">
+    <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Text="LAYOUT PREVIEW (10x10)" HorizontalAlignment="Center" Margin="5" FontSize="10" Foreground="#757575"/>
+                            
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding LayoutPoints}" Margin="5">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="10" Rows="10"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ToggleButton IsChecked="{Binding IsSelected}" Width="25" Height="25" Margin="1"
+                                                      ToolTip="{Binding Number}" Padding="0">
+                                            <TextBlock Text="{Binding Number}" FontSize="8"/>
+                                        </ToggleButton>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Cancel" Width="80" Height="30" Margin="0,0,10,0" Click="OnCancelClick"/>
+            <Button Content="Apply" Width="80" Height="30" Background="#2196F3" Foreground="White" Click="OnApplyClick"/>
+        </StackPanel>
+    </Grid>
+</Window>
