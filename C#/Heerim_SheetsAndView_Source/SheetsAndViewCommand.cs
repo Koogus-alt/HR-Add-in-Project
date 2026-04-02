@@ -6,8 +6,23 @@ using Autodesk.Revit.UI;
 
 namespace Heerim_SheetsAndView
 {
-    public class SheetsAndViewCommand
+    [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
+    public class SheetsAndViewCommand : IExternalCommand
     {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            try
+            {
+                Run(commandData.Application);
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Result.Failed;
+            }
+        }
+
         public static void Run(UIApplication uiApp)
         {
             UIDocument uiDoc = uiApp.ActiveUIDocument;

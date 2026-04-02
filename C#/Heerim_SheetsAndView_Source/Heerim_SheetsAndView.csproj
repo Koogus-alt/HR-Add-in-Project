@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="MainApplication.cs" />
     <Compile Include="SheetsAndViewCommand.cs" />
     <Compile Include="ExcelManager.cs" />
     <Compile Include="LayoutEngine.cs" />

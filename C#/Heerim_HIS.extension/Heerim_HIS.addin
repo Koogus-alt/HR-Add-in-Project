@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Heerim HIS Data</Name>
+    <Description>Modernized HIS Data Management for Heerim</Description>
+    <Assembly>C:\Users\thomashj\Desktop\HR Add-in Project\C#\Heerim_HIS.extension\bin\Release\net8.0-windows\Heerim_HIS.dll</Assembly>
+    <FullClassName>Heerim_HIS.MainApplication</FullClassName>
+    <ClientId>B7B7B7B7-B7B7-B7B7-B7B7-B7B7B7B7B7B8</ClientId>
+    <VendorId>HEERIM</VendorId>
+    <VendorDescription>Heerim Architects &amp; Engineers</VendorDescription>
+  </AddIn>
+</RevitAddIns>
