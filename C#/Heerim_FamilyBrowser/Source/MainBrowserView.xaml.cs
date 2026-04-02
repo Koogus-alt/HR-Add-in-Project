@@ -27,7 +27,7 @@ namespace Heerim_FamilyBrowser
             string assemblyDir = System.IO.Path.GetDirectoryName(assemblyLocation);
             // DLL is in C#\Heerim_FamilyBrowser.extension\bin\Release\net8.0-windows\
             // Library is in Library\ (at the root of the extension)
-            _basePath = System.IO.Path.GetFullPath(System.IO.Path.Combine(assemblyDir, "..", "..", "..", "Library"));
+            _basePath = System.IO.Path.GetFullPath(System.IO.Path.Combine(assemblyDir, "Library"));
             
             LoadLibrary();
         }
