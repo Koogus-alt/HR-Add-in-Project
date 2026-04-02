@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Heerim Smart Assist</Name>
+    <Description>Integrated Smart Assist for Heerim Revit Projects</Description>
+    <Assembly>C:\Users\thomashj\Desktop\HR Add-in Project\C#\RevitFamilyBrowser_Source\bin\Release\net8.0-windows\RevitFamilyBrowser.dll</Assembly>
+    <FullClassName>RevitFamilyBrowser.MyApplication</FullClassName>
+    <ClientId>B8E591F4-13D9-4B82-AE5F-2947FBC3C174</ClientId>
+    <VendorId>HEERIM</VendorId>
+    <VendorDescription>Heerim Architects &amp; Engineers</VendorDescription>
+  </AddIn>
+</RevitAddIns>

@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>Heerim_SheetsAndView</AssemblyName>
+    <RootNamespace>Heerim_SheetsAndView</RootNamespace>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="MainApplication.cs" />
+    <Compile Include="SheetsAndViewCommand.cs" />
+    <Compile Include="ExcelManager.cs" />
+    <Compile Include="LayoutEngine.cs" />
+    <Compile Include="MainView.xaml.cs" />
+    <Compile Include="RelayCommand.cs" />
+    <Compile Include="RevitDataManager.cs" />
+    <Compile Include="SheetAutomation.cs" />
+    <Page Include="MainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2026\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+  </ItemGroup>
+
+</Project>

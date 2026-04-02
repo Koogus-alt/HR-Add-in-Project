@@ -1,0 +1,81 @@
+<Window x:Class="Heerim_SmartAssist.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Smart Assist 설정" Height="450" Width="400"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="#F5F5F7"
+        KeyDown="Window_KeyDown">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TabControl Grid.Row="0" Background="Transparent" BorderThickness="0">
+            <TabItem Header="즐겨찾기 정렬">
+                <Border Background="White" BorderBrush="#C7C7CC" BorderThickness="1" CornerRadius="6" Margin="0,10,0,0" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="즐겨찾기 항목 표시 방식" FontWeight="Bold" FontSize="14" Foreground="#1C1C1E" Margin="0,0,0,10"/>
+                        <RadioButton x:Name="SortModeNone" Content="상단 고정 안함 (기본 정렬)" Margin="0,5" GroupName="SortMode"/>
+                        <TextBlock Text="카테고리 내에서 이름순으로 자연스럽게 섞여 표시됩니다." Foreground="#8E8E93" FontSize="11" Margin="20,0,0,10"/>
+                        
+                        <RadioButton x:Name="SortModeCategory" Content="카테고리 내 상단 고정" Margin="0,5" GroupName="SortMode"/>
+                        <TextBlock Text="각 카테고리(예: 가구, 창문) 안에서 즐겨찾기가 가장 위에 올라옵니다." Foreground="#8E8E93" FontSize="11" Margin="20,0,0,10"/>
+                        
+                        <RadioButton x:Name="SortModeHeader" Content="독립된 즐겨찾기 그룹으로 분리" Margin="0,5" GroupName="SortMode"/>
+                        <TextBlock Text="모든 즐겨찾기 항목을 '★ 즐겨찾기' 라는 별도의 최상단 그룹으로 빼서 모아봅니다." Foreground="#8E8E93" FontSize="11" Margin="20,0,0,10"/>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+            <TabItem Header="카테고리 필터">
+                <Border Background="White" BorderBrush="#C7C7CC" BorderThickness="1" CornerRadius="6" Margin="0,10,0,0" Padding="15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="조회할 카테고리 선택" FontWeight="Bold" FontSize="14" Foreground="#1C1C1E"/>
+                            <TextBlock Text="선택된 카테고리의 패밀리만 Smart Assist 목록에 표시됩니다." Foreground="#8E8E93" FontSize="11" Margin="0,4,0,8"/>
+                            <ComboBox x:Name="TabTypeCombo" SelectedIndex="0" SelectionChanged="TabTypeCombo_SelectionChanged" Height="28">
+                                <ComboBoxItem Content="Family 탭 목록"/>
+                                <ComboBoxItem Content="Annotate 탭 목록"/>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <Border Grid.Row="1" BorderBrush="#E5E5EA" BorderThickness="1" CornerRadius="4">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="CategoryListControl">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="5,5"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="취소" Width="70" Height="30" Margin="0,0,10,0" Click="OnCancelClick" 
+                    Background="Transparent" BorderBrush="#C7C7CC" BorderThickness="1" Foreground="#1C1C1E">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button Content="저장" Width="70" Height="30" Click="OnSaveClick" 
+                    Background="#34C759" Foreground="White" BorderThickness="0" FontWeight="Bold">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>
