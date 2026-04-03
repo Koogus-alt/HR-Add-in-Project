@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Heerim Smart Assist</Name>
+    <Assembly>C:\Heerim_Addin\C#\Heerim_SmartAssist\SmartAssist.dll</Assembly>
+    <FullClassName>Heerim_SmartAssist.MyApplication</FullClassName>
+    <ClientId>B8E591F4-13D9-4B82-AE5F-2947FBC3C174</ClientId>
+    <VendorId>HEERIM</VendorId>
+    <VendorDescription>Heerim Architects &amp; Engineers</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>Heerim Sheets and View</Name>
+    <Assembly>C:\Heerim_Addin\C#\Heerim_SheetsAndView\Heerim_SheetsAndView.dll</Assembly>
+    <FullClassName>Heerim_SheetsAndView.MainApplication</FullClassName>
+    <ClientId>A1A1A1A1-A1A1-A1A1-A1A1-A1A1A1A1A1A1</ClientId>
+    <VendorId>HEERIM</VendorId>
+    <VendorDescription>Heerim Architects &amp; Engineers</VendorDescription>
+  </AddIn>
+</RevitAddIns>
