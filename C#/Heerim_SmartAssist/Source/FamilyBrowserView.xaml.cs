@@ -358,6 +358,27 @@ namespace Heerim_SmartAssist
             }
         }
 
+        private void OnLibraryClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (MyApplication.Instance?.UIApp?.ActiveUIDocument?.Document is Document doc)
+                {
+                    var libraryWindow = new LibraryExplorerWindow(doc);
+                    libraryWindow.Owner = System.Windows.Window.GetWindow(this);
+                    libraryWindow.Show();
+                }
+                else
+                {
+                    Autodesk.Revit.UI.TaskDialog.Show("오류", "현재 열려있는 레빗 프로젝트가 없습니다.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"라이브러리 탐색기를 열 수 없습니다: {ex.Message}");
+            }
+        }
+
         private void ApplySortingConfiguration()
         {
             var cvsList = new[] { "FamilyCVS", "AnnotateCVS" };
@@ -811,7 +832,7 @@ namespace Heerim_SmartAssist
                 }
 
                 string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string folder = System.IO.Path.Combine(appDataPath, "Autodesk", "Revit", "Addins", "2026", "RevitFamilyBrowser");
+                string folder = System.IO.Path.Combine(appDataPath, "Autodesk", "Revit", "Addins", "2026", "SmartAssist");
                 System.IO.Directory.CreateDirectory(folder);
                 string favoritesFile = System.IO.Path.Combine(folder, "favorites_v2.json");
 
