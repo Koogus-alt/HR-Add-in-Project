@@ -151,8 +151,7 @@ def load_or_get_family_symbol(doc, family_name="StairGapFiller_Void"):
 
     # Try to load
     current_dir = os.path.dirname(__file__)
-    panel_dir = os.path.dirname(current_dir)
-    family_path = os.path.join(panel_dir, "Families", family_name + ".rfa")
+    family_path = os.path.join(current_dir, "Families", family_name + ".rfa")
     
     if not os.path.exists(family_path):
         forms.alert("Family file not found:\n{}".format(family_path))

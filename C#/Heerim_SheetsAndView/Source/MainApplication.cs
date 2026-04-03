@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.UI;
@@ -10,6 +10,8 @@ namespace Heerim_SheetsAndView
     {
         public Result OnStartup(UIControlledApplication application)
         {
+            // NEW: Create Ribbon Tab and Button (MOVED TO pyRevit)
+            /*
             string tabName = "Heerim";
             try { application.CreateRibbonTab(tabName); } catch { }
 
@@ -48,6 +50,7 @@ namespace Heerim_SheetsAndView
                 }
             }
             catch { }
+            */
 
             return Result.Succeeded;
         }

@@ -266,8 +266,7 @@ def load_or_get_family_symbol(doc, family_name="StairGapFiller"):
     # Use __file__ relative path which is safer across pyRevit versions
     try:
         current_dir = os.path.dirname(__file__)
-        panel_dir = os.path.dirname(current_dir)
-        family_path = os.path.join(panel_dir, "Families", family_name + ".rfa")
+        family_path = os.path.join(current_dir, "Families", family_name + ".rfa")
     except:
         # Fallback if __file__ is not available for some reason (rare)
         bundle_path = script.get_bundle_file()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.UI;
@@ -25,8 +25,8 @@ namespace Heerim_SmartAssist
             // Register UI events for document switching
             application.ViewActivated += OnViewActivated;
 
-            // NEW: Create Ribbon Tab and Button
-            CreateRibbon(application);
+            // NEW: Create Ribbon Tab and Button (MOVED TO pyRevit)
+            // CreateRibbon(application);
 
             try
             {
