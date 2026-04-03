@@ -16,9 +16,18 @@ namespace Heerim_SmartAssist
         
         public static ParameterInjectUpdater ParameterUpdater { get; private set; }
 
+        // --- GLOBAL EXTERNAL EVENTS ---
+        public static LibraryLoadHandler LibraryHandler { get; private set; }
+        public static ExternalEvent LibraryEvent { get; private set; }
+
         public Result OnStartup(UIControlledApplication application)
         {
             Instance = this;
+
+            // Initialize Global External Events
+            LibraryHandler = new LibraryLoadHandler();
+            LibraryEvent = ExternalEvent.Create(LibraryHandler);
+
             // Register Dockable Pane
             RegisterDockablePane(application);
 

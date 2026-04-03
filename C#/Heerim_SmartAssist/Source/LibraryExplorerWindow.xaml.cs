@@ -23,6 +23,49 @@ namespace Heerim_SmartAssist
         public bool IsSelected { get; set; }
     }
 
+    // --- External Event Handler ---
+    public class LibraryLoadHandler : Autodesk.Revit.UI.IExternalEventHandler
+    {
+        public string? FamilyPath { get; set; }
+        public string? FamilyName { get; set; }
+        public Action<string>? OnSuccess { get; set; }
+        public Action<string>? OnError { get; set; }
+
+        public void Execute(Autodesk.Revit.UI.UIApplication app)
+        {
+            if (string.IsNullOrEmpty(FamilyPath)) return;
+
+            Document doc = app.ActiveUIDocument.Document;
+            try
+            {
+                using (Transaction trans = new Transaction(doc, "Load Family from Library"))
+                {
+                    trans.Start();
+
+                    Family? loadedFamily = null;
+                    bool success = doc.LoadFamily(FamilyPath, out loadedFamily);
+
+                    if (success && loadedFamily != null)
+                    {
+                        trans.Commit();
+                        OnSuccess?.Invoke(loadedFamily.Name);
+                    }
+                    else
+                    {
+                        trans.RollBack();
+                        OnError?.Invoke(FamilyName ?? "패밀리");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Autodesk.Revit.UI.TaskDialog.Show("Error", "로드 실패: " + ex.Message);
+            }
+        }
+
+        public string GetName() => "LibraryLoadHandler";
+    }
+
     public partial class LibraryExplorerWindow : Window
     {
         private Document _doc;
@@ -35,6 +78,21 @@ namespace Heerim_SmartAssist
         {
             InitializeComponent();
             _doc = doc;
+
+            // Use the Global External Event from MyApplication
+            MyApplication.LibraryHandler.OnSuccess = (name) => {
+                Dispatcher.Invoke(() => {
+                    StatusText.Text = $"✅ 로드 완료: {name}";
+                    Autodesk.Revit.UI.TaskDialog.Show("로드 완료", $"'{name}' 패밀리가 프로젝트에 로드되었습니다.");
+                });
+            };
+
+            MyApplication.LibraryHandler.OnError = (name) => {
+                Dispatcher.Invoke(() => {
+                    StatusText.Text = $"⚠️ 로드 실패: {name}";
+                    Autodesk.Revit.UI.TaskDialog.Show("알림", $"'{name}' 패밀리 로드에 실패했습니다. 이미 존재할 수 있습니다.");
+                });
+            };
 
             // Try to find the library path
             _libraryRootPath = FindLibraryPath();
@@ -361,41 +419,12 @@ namespace Heerim_SmartAssist
                 return;
             }
 
-            try
-            {
-                StatusText.Text = $"로딩 중: {_selectedFamily.Name}...";
-
-                using (var trans = new Transaction(_doc, "Load Family from Library"))
-                {
-                    trans.Start();
-
-                    Family? loadedFamily = null;
-                    bool success = _doc.LoadFamily(_selectedFamily.RfaPath, out loadedFamily);
-
-                    if (success && loadedFamily != null)
-                    {
-                        trans.Commit();
-                        StatusText.Text = $"✅ 로드 완료: {loadedFamily.Name} — Smart Assist에서 새로고침하면 사용 가능합니다.";
-
-                        Autodesk.Revit.UI.TaskDialog.Show("로드 완료",
-                            $"'{loadedFamily.Name}' 패밀리가 현재 프로젝트에 성공적으로 로드되었습니다.\n\n" +
-                            "Smart Assist의 새로고침(🔄) 버튼을 누르면 즉시 사용할 수 있습니다.");
-                    }
-                    else
-                    {
-                        trans.RollBack();
-                        StatusText.Text = $"⚠️ '{_selectedFamily.Name}' - 이미 로드되어 있거나 로드에 실패했습니다.";
-
-                        Autodesk.Revit.UI.TaskDialog.Show("알림",
-                            $"'{_selectedFamily.Name}' 패밀리가 이미 프로젝트에 있거나 로드에 실패했습니다.\n\n" +
-                            "이미 로드된 경우 Smart Assist에서 바로 검색해 보세요.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                StatusText.Text = $"❌ 오류: {ex.Message}";
-            }
+            StatusText.Text = $"요청 중: {_selectedFamily.Name}...";
+            
+            // Set handler data and raise event via MyApplication's global event
+            MyApplication.LibraryHandler.FamilyPath = _selectedFamily.RfaPath;
+            MyApplication.LibraryHandler.FamilyName = _selectedFamily.Name;
+            MyApplication.LibraryEvent.Raise();
         }
     }
 }
