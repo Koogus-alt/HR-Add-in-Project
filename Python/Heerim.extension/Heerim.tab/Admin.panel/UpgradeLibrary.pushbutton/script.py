@@ -3,8 +3,7 @@ from pyrevit import revit, DB, UI, script
 import os
 
 # 1. 대상 라이브러리 경로 설정
-# 1. 대상 라이브러리 경로 설정
-lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..", "C#", "Heerim_FamilyBrowser.extension", "Library"))
+lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'C#', 'Heerim_FamilyBrowser', 'Library'))
 output = script.get_output()
 
 def upgrade_families():
@@ -27,7 +26,7 @@ def upgrade_families():
     success_count = 0
     fail_count = 0
 
-    # 3. 루프 실행 (하나씩 열고 저장하고 닫기)
+    # 3. 루프 실행
     for f_path in family_files:
         count += 1
         file_name = os.path.basename(f_path)
@@ -35,14 +34,16 @@ def upgrade_families():
         try:
             print("[{}/{}] 작업 중: {}".format(count, total, file_name))
             
-            # 패밀리 파일 열기
-            # OpenOptions를 사용하여 업그레이드 경고 무시 시도
             options = DB.OpenOptions()
             f_doc = app.OpenDocumentFile(DB.ModelPathUtils.ConvertUserVisiblePathToModelPath(f_path), options)
             
             if f_doc.IsFamilyDocument:
-                # 저장 (이 과정에서 현재 레빗 버전으로 업그레이드됨)
-                f_doc.Save()
+                # Save with options to prevent backup explosion
+                save_options = DB.SaveAsOptions()
+                save_options.MaximumBackups = 1
+                save_options.OverwriteExistingFile = True
+                
+                f_doc.SaveAs(f_path, save_options)
                 f_doc.Close(True)
                 success_count += 1
             else:
@@ -50,14 +51,14 @@ def upgrade_families():
                 fail_count += 1
                 
         except Exception as e:
-            print("  >> !!! 에러 발생 ({}): {}".format(file_name, str(e)))
+            # Use raw string or avoid complex formatting to prevent encoding issues in print
+            print("  >> !!! 에러 발생: " + str(file_name) + " - " + str(e))
             fail_count += 1
 
     print("\n--- 작업 완료 ---")
     print("성공: {} / 실패: {}".format(success_count, fail_count))
 
 if __name__ == "__main__":
-    # 사용자 확인 창
     res = UI.TaskDialog.Show("Library Batch Upgrade", 
                             "라이브러리 전체를 Revit 2026 버전으로 업그레이드하시겠습니까?\n이 작업은 시간이 오래 걸릴 수 있습니다.", 
                             UI.TaskDialogCommonButtons.Yes | UI.TaskDialogCommonButtons.No)
